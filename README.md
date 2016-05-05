@@ -1,1 +1,1 @@
-Sample Django Project guided by several tutorials like DjangoGirls, [django-marcador]( http://django-marcador.keimlink.de/es/), [Django-CMS](http://www.django-cms.org/en/blog/2016/02/16/build-a-website-without-knowing-python-django-part-one/)
+Sample Django Project guided by several tutorials like [DjangoGirls](http://tutorial.djangogirls.org/) , [django-marcador]( http://django-marcador.keimlink.de/es/), [Django-CMS](http://www.django-cms.org/en/blog/2016/02/16/build-a-website-without-knowing-python-django-part-one/)

@@ -1,5 +1,5 @@
 superuser: al
-psswd: 3Alberto
+psswd: ********
 
 groups: 
 	- Lectores (No permissions)
