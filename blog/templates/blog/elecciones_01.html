@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- link rel="stylesheet" href="weather.css" -->
+<!--link rel="stylesheet" media="(max-width:600px)" href="weather-2-small.css" -->
+<!--link rel="stylesheet" media="(min-width:601px)" href="weather-2-large.css" -->
+	<meta charset="utf-8">
+	<title>D3: Ascending and descending sorts</title>
+    	<script src="http://d3js.org/d3.v3.min.js"  charset="utf-8"></script>
+	
+	<!-- makes 'elecciones' json object accessible as a variable. Use 
+  -->
+
+	<style type="text/css">
+
+
+
+		body {
+			background-color: gray;
+		}
+
+		/* New rules for styling buttons */
+		#buttonContainer {
+			margin-bottom: 10px;
+		}
+
+		button {
+			padding: 15px;
+		}
+
+		svg {
+			background-color: white;
+		}
+
+		g.bar text {
+			font-family: sans-serif;
+			font-size: 14px;
+			fill: green;
+			font-style: bold;
+			text-anchor: middle;
+			opacity: 0;
+		}
+
+		g.bar.highlight text {
+			opacity: 1;
+		}
+
+		g.bar.highlight rect {
+			fill: Maroon;
+		}
+
+		.axis path,
+		.axis line {
+			fill: none;
+			stroke: black;
+			shape-rendering: crispEdges;
+		}
+
+		.axis text {
+			font-family: sans-serif;
+			font-size: 11px;
+		}
+
+
+
+	</style>
+</head>
+<body>
+
+	<!-- New buttons to trigger sorting! -->
+	<div id="buttonContainer">
+		<button id="sortAscending">Sort Ascending</button>
+		<button id="sortDescending">Sort Descending</button>
+	</div>
+
+	<script type="text/javascript">
+
+
+var elecciones = {"Información general:":{"Votos blancos":"187766","Votos nulos":"226994","Censo total":"34631581","Votos correctos":"25349824","Porcentaje escrutado":10000,"Abstenciones":"9280429"},"Escrutinio":{"CCD":{"Nombre completo":"CIUDADANOS DE CENTRO DEMOCRÁTICO","Votos":"10805","escaños":0},"PODEMOS":{"Nombre completo":"PODEMOS","Votos":"3181952","escaños":42},"CRA":{"Nombre completo":"CIUDADANOS RURALES AGRUPADOS","Votos":"1027","escaños":0},"C's":{"Nombre completo":"CIUDADANOS-PARTIDO DE LA CIUDADANÍA","Votos":"3500446","escaños":40},"DN":{"Nombre completo":"DEMOCRACIA NACIONAL","Votos":"1685","escaños":0},"EL PI":{"Nombre completo":"EL PI - PROPOSTA PER LES ILLES","Votos":"12902","escaños":0},"EB":{"Nombre completo":"ESCAÑOS EN BLANCO","Votos":"10060","escaños":0},"EH Bildu":{"Nombre completo":"EUSKAL HERRIA BILDU","Votos":"218467","escaños":2},"EAJ-PNV":{"Nombre completo":"EUZKO ALDERDI JELTZALEA-PARTIDO NACIONALISTA VASCO","Votos":"301585","escaños":6},"FE de las JONS":{"Nombre completo":"FALANGE ESPAÑOLA DE LAS J.O.N.S.","Votos":"7591","escaños":0},"PFyV":{"Nombre completo":"FAMILIA Y VIDA","Votos":"714","escaños":0},"FDEE":{"Nombre completo":"FORO DEMÓCRATA","Votos":"454","escaños":0},"IFem":{"Nombre completo":"INICIATIVA FEMINISTA","Votos":"1594","escaños":0},"Ln":{"Nombre completo":"LIBERTAD NAVARRA, LIBERTATE NAFARRA","Votos":"1022","escaños":0},"CENTRO MODERADO":{"Nombre completo":"LOS VERDES-ECOPACIFISTAS","Votos":"3254","escaños":0},"+MAS+":{"Nombre completo":"MUERTE AL SISTEMA","Votos":"309","escaños":0},"mlgXSÍ":{"Nombre completo":"MÁLAGA POR SÍ","Votos":"924","escaños":0},"OE":{"Nombre completo":"ONGI ETORRI","Votos":"110","escaños":0},"PACMA":{"Nombre completo":"PARTIDO ANIMALISTA CONTRA EL MALTRATO ANIMAL","Votos":"219181","escaños":0},"PCPE":{"Nombre completo":"PARTIDO COMUNISTA DE LOS PUEBLOS DE ESPAÑA","Votos":"30895","escaños":0},"PCOE":{"Nombre completo":"PARTIDO COMUNISTA OBRERO ESPAÑOL","Votos":"1906","escaños":0},"PT":{"Nombre completo":"PARTIDO DA TERRA","Votos":"2957","escaños":0},"PH":{"Nombre completo":"PARTIDO HUMANISTA","Votos":"2907","escaños":0},"P-LIB":{"Nombre completo":"PARTIDO LIBERTARIO","Votos":"2830","escaños":0},"PP":{"Nombre completo":"PARTIDO POPULAR","Votos":"7215530","escaños":123},"PREPAL":{"Nombre completo":"PARTIDO REGIONALISTA DEL PAÍS LEONES","Votos":"1363","escaños":0},"PSOE":{"Nombre completo":"PARTIDO SOCIALISTA OBRERO ESPAÑOL","Votos":"5530693","escaños":90},"PUM+J":{"Nombre completo":"POR UN MUNDO MÁS JUSTO","Votos":"4531","escaños":0},"SAIn":{"Nombre completo":"SOLIDARIDAD Y AUTOGESTIÓN INTERNACIONALISTA","Votos":"4515","escaños":0},"SOLUCIONA":{"Nombre completo":"SOLUCIONA","Votos":"406","escaños":0},"SOMVAL":{"Nombre completo":"SOM VALENCIANS","Votos":"6084","escaños":0},"unio.cat":{"Nombre completo":"UNIÓ DEMOCRÀTICA DE CATALUNYA","Votos":"64726","escaños":0},"UPYD":{"Nombre completo":"UNIÓN PROGRESO Y DEMOCRACIA","Votos":"153498","escaños":0},"VOX":{"Nombre completo":"VOX","Votos":"57733","escaños":0},"PLD":{"Nombre completo":"PARTIDO LIBERAL DE DERECHAS","Votos":"204","escaños":0},"AJU":{"Nombre completo":"ANDALUCES DE JAÉN UNIDOS","Votos":"771","escaños":0},"CANARIAS DECIDE":{"Nombre completo":"CANARIAS DECIDE: LOS VERDES, UNIDAD DEL PUEBLO Y ALTERNATIVA REPUBLICANA","Votos":"2874","escaños":0},"GBAI":{"Nombre completo":"GEROA BAI","Votos":"30554","escaños":0},"CCa-PNC":{"Nombre completo":"COALICIÓN CANARIA - PARTIDO NACIONALISTA CANARIO","Votos":"81750","escaños":1},"ARAPV":{"Nombre completo":"ARA, PAÍS VALENCIÀ","Votos":"2487","escaños":0},"IU-UPeC":{"Nombre completo":"UNIDAD POPULAR: IZQUIERDA UNIDA, UNIDAD POPULAR EN COMÚN","Votos":"923105","escaños":2},"EU-eX":{"Nombre completo":"EXTREMADURA UNIDA-EXTREMEÑOS","Votos":"1995","escaños":0},"RECORTES CERO-GRUPO VERDE":{"Nombre completo":"RECORTES CERO-GRUPO VERDE","Votos":"48217","escaños":0},"X LA IZQUIERDA-LOS VERDES":{"Nombre completo":"X LA IZQUIERDA-LOS VERDES","Votos":"7342","escaños":0},"JS,PC":{"Nombre completo":"JUSTIZIA SOCIAL, PARTICIPACIÓN CIUDADANA","Votos":"405","escaños":0},"MÉS":{"Nombre completo":"MÉS","Votos":"33931","escaños":0},"DL":{"Nombre completo":"DEMOCRÀCIA I LLIBERTAT. CONVERGÈNCIA. DEM\u00d2CRATES. REAGRUPAMENT","Votos":"565501","escaños":8},"PODEMOS-COMPROMÍS":{"Nombre completo":"COMPROMÍS-PODEMOS-ÉS EL MOMENT","Votos":"671071","escaños":9},"AVANT":{"Nombre completo":"AVANT VALENCIANS","Votos":"1001","escaños":0},"NÓS":{"Nombre completo":"NÓS-CANDIDATURA GALEGA (BNG-CG-FOGA-PCPG-PG)","Votos":"70464","escaños":0},"EN COMÚ":{"Nombre completo":"EN COMÚ PODEM","Votos":"927940","escaños":12},"PODEMOS-En Marea-ANOVA-EU":{"Nombre completo":"EN MAREA","Votos":"408370","escaños":6},"EN POSITIU":{"Nombre completo":"EN POSITIU","Votos":"1276","escaños":0},"Independientes-FIA":{"Nombre completo":"INDEPENDIENTES POR ARAGÓN","Votos":"673","escaños":0},"ERC-CATSI":{"Nombre completo":"ESQUERRA REPUBLICANA DE CATALUNYA-CATALUNYA SÍ","Votos":"599289","escaños":9}}}
+		//Width, height, padding
+        var w = 1150;
+        var h = 600;
+        var padding = 70;
+	var escrutinio = elecciones.Escrutinio;
+    var dataset = []; // This will be the resulting array
+
+    for (var key in escrutinio) {// ther's only 1 entry with key = "_"
+        
+        var entry = escrutinio[key]; // 'entry' is 55-parties object + 1
+        entry.id = key;
+        dataset.push(entry);
+
+
+    }
+
+
+
+
+        //Array of dummy data values
+        var dataset = d3.map(elecciones.Escrutinio).entries();
+
+		//Configure x and y scale functions
+		var xScale = d3.scale.ordinal()
+						.domain(d3.range(dataset.length))
+						.rangeRoundBands([ padding, w - padding ], 0.05);
+
+		var yScale = d3.scale.linear()
+						.domain([ 0, d3.max(dataset, function(d) { return +d.value.Votos;}) ])
+						.rangeRound([ h - padding, padding ]);
+
+        var xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient("bottom");
+
+		//Configure y axis generator
+		var yAxis = d3.svg.axis()
+						.scale(yScale)
+						.orient("left")
+						.ticks(10);
+
+		//Create SVG element
+		var svg = d3.select("body")
+					.append("svg")
+					.attr("width", w)
+					.attr("height", h);
+
+		//Create groups
+		var groups = svg.selectAll("g")
+						.data(dataset, function(d) { return +d.value.Votos;})
+						.enter()
+						.append("g")
+						.attr("class", "bar")
+						.attr("transform", function(d, i) {
+					  		return "translate(" + xScale(i) + ",0)";
+						})
+						.on("mouseover", function() {
+							d3.select(this)
+								.classed("highlight", true);
+						})
+						.on("mouseout", function() {
+							d3.select(this)
+								.classed("highlight", false);
+						});
+
+		//Add bar to each group
+		var rects = groups.append("rect")
+						  .attr("x", 0)
+						  .attr("y", function(d) {
+						  		return h - padding;
+						  })
+						  .attr("width", xScale.rangeBand())
+						  .attr("height", 0)
+						  .attr("fill", "SteelBlue");
+
+		//Add label to each group
+		groups.append("text")
+			.attr("x", xScale.rangeBand() / 2)
+			.attr("y", function(d) {
+				return yScale(d.value.Votos) - 34;
+			})
+			.text(function(d) {
+				return d.value.Votos+ " Votos : " + d.key + " : Escaños" + d.value["escaños"];
+			})
+
+		//Transition rects into place
+		rects.transition()
+			.delay(function(d, i) {
+				return i * 100;
+			})
+			.duration(1500)
+			.attr("y", function(d) {
+				return yScale(d.value.Votos);
+			})
+			.attr("height", function(d) {
+				return h - padding - yScale(d.value.Votos);
+			})
+			.filter(function(d) {
+				if (+d.value["escaños"] > 0) {
+					return true;
+				}
+				return false;
+			})
+			.attr("fill", "DarkOrange");
+
+		//Create y axis
+		svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate(" + padding + ",0)")
+			.attr("opacity", 0)
+			.call(yAxis)
+			.transition()
+			.delay(2000)
+			.duration(1500)
+			.attr("opacity", 1.0);
+
+        svg.append("g")
+			.attr("class", "axis")
+			.attr("transform", "translate(0, " + (h - padding) + ")")
+			.attr("opacity", 0)
+			.call(xAxis)
+			.transition()
+			.delay(2000)
+			.duration(1500)
+			.attr("opacity", 1.0);
+
+		//Sorting logic
+		d3.select("#sortAscending")
+			.on("click", function() {
+
+				groups.sort(function(a, b) {
+  						return d3.ascending(+a.value.Votos, +b.value.Votos);
+					})
+					.transition()
+					.delay(function(d, i) {
+						return i * 50;
+					})
+					.duration(1000)
+					.attr("transform", function(d, i) {
+				  		return "translate(" + xScale(i) + ",0)";
+					});
+
+			});
+
+		//This is EXACTLY the same as above, except for:
+		d3.select("#sortDescending")  //DEscending
+			.on("click", function() {
+
+				groups.sort(function(a, b) {
+  						return d3.descending(+a.value.Votos, +b.value.Votos);  //DEscending
+					})
+					.transition()
+					.delay(function(d, i) {
+						return i * 50;
+					})
+					.duration(1000)
+					.attr("transform", function(d, i) {
+				  		return "translate(" + xScale(i) + ",0)";
+					});
+
+			});
+
+
+
+	</script>
+</body>
+</html>
+

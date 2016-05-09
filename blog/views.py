@@ -85,3 +85,6 @@ def comment_remove(request, pk):
     comment.delete()
     return redirect('blog.views.post_detail', pk=post_pk)
 
+def show_graphic_one(request):
+    return render(request, 'blog/elecciones_01.html', {})
+
